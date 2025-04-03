@@ -9,7 +9,7 @@ export interface RequestContext {
 type ConstructorHandler<T extends string> = (req: Bun.BunRequest<T>, server: Server, ctx: RequestContext) => Response | Promise<Response>;
 
 interface BunRouteConstructor { 
-    middlewares: ((request: Bun.BunRequest, server: Server, ctx: Record<string, any>) => Promise<Response | void>)[];
+    middlewares: ((request: Bun.BunRequest, server: Server, ctx: Record<string, any>) => (Response | void) | Promise<Response | void>)[];
 }
 
 /**
@@ -104,7 +104,7 @@ export class BunRoute <T extends string>{
         const POST = this.post ? this.buildMethod(this.post.bind(this)) : undefined;
         const PUT = this.put ? this.buildMethod(this.put.bind(this)) : undefined;
         const DELETE = this.delete ? this.buildMethod(this.delete.bind(this)) : undefined;
-
+        Bun.CSRF.generate
         return {
             GET,
             POST,
