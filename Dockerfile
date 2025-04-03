@@ -1,4 +1,4 @@
-FROM oven/bun:latest
+FROM oven/bun:1.2.8-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
