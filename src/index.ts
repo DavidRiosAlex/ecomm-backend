@@ -1,3 +1,4 @@
+import { StatusCodes } from "@utils/StatusCodes";
 import { routes } from "./routes";
 
 Bun.serve({
@@ -5,6 +6,6 @@ Bun.serve({
     port: 3001,
     routes,
     fetch: () => {
-        return new Response("Not Found", { status: 404 });
+        return new Response("Not Found", StatusCodes.NOT_FOUND);
     }
 });

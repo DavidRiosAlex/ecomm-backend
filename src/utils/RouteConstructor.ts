@@ -1,11 +1,15 @@
 // NOTE: do not update this class, ask for help if you need to update it.
 
 import type { Server } from "bun";
+import { StatusCodes } from "./StatusCodes";
 
 type RequestContextTokens = 'csrf'
 export interface RequestContext {
     [key: string]: any;
-    tokens: Record<RequestContextTokens, string>
+    tokens: Record<RequestContextTokens, string>;
+    i18n?: {
+        t: (key: string, options?: Record<string, any>) => string;
+    };
 }
 
 type ConstructorHandler<T extends string> = (req: Bun.BunRequest<T>, server: Server, ctx: RequestContext) => Response | Promise<Response>;
@@ -51,16 +55,16 @@ export class BunRoute <T extends string>{
     }
 
     async get(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', { status: 405 });
+        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
     }
     async post(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', { status: 405 });
+        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
     }
     async put(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', { status: 405 });
+        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
     }
     async delete(req: Bun.BunRequest<T>, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', { status: 405 });
+        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
     }
 
     private buildMethod(method?: ConstructorHandler<T>): Bun.RouterTypes.RouteHandler<T> | undefined {

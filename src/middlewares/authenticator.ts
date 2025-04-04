@@ -1,4 +1,5 @@
 import type { RequestContext } from "@utils/RouteConstructor";
+import { StatusCodes } from "@utils/StatusCodes";
 import type { Server } from "bun";
 
 type SessionData = {
@@ -12,12 +13,12 @@ const sessions = new Map<string, SessionData>();
 const Authenticator = (request: Bun.BunRequest, server: Server, ctx: RequestContext): Response | void => {
     const auth = request.cookies.get('eaa-session');
     if (!auth) {
-        return new Response('Unauthorized', { status: 401 });
+        return new Response('Unauthorized', StatusCodes.UNAUTHORIZED);
     }
     const authData = sessions.get(auth);
     if (!authData) {
         // Session not found or expired
-        return new Response('Unauthorized', { status: 401 });
+        return new Response('Unauthorized', StatusCodes.UNAUTHORIZED);
     }
     const { userId } = authData;
     const user = {

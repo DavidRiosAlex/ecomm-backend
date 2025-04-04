@@ -12,5 +12,8 @@
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "build": "bun build src/index.ts --outdir ./build"
+  },
+  "dependencies": {
+    "i18next": "^24.2.3"
   }
 }
