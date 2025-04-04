@@ -26,6 +26,8 @@
 
     "paths": {
       "@utils/*": ["utils/*"],
+      "@configs/*": ["configs/*"],
+      "@middlewares/*": ["middlewares/*"],
     },
     "baseUrl": "./src",
   }

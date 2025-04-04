@@ -2,14 +2,16 @@
 
 import type { Server } from "bun";
 
+type RequestContextTokens = 'csrf'
 export interface RequestContext {
     [key: string]: any;
+    tokens: Record<RequestContextTokens, string>
 }
 
 type ConstructorHandler<T extends string> = (req: Bun.BunRequest<T>, server: Server, ctx: RequestContext) => Response | Promise<Response>;
 
 interface BunRouteConstructor { 
-    middlewares: ((request: Bun.BunRequest, server: Server, ctx: Record<string, any>) => (Response | void) | Promise<Response | void>)[];
+    middlewares: ((request: Bun.BunRequest, server: Server, ctx: RequestContext) => (Response | void) | Promise<Response | void>)[];
 }
 
 /**
@@ -65,7 +67,12 @@ export class BunRoute <T extends string>{
         if (!method) return undefined;
         return async (request: Bun.BunRequest, server: Server): Promise<Response> => {
             let err: Response | void = undefined;
-            const ctx: RequestContext = {};
+            const ctx: RequestContext = {
+                tokens: {
+                    csrf: ''
+                },
+
+            };
             for (const middleware of this.middlewares) {
                 err = await middleware(request, server, ctx);
                 if (err) {
@@ -104,7 +111,6 @@ export class BunRoute <T extends string>{
         const POST = this.post ? this.buildMethod(this.post.bind(this)) : undefined;
         const PUT = this.put ? this.buildMethod(this.put.bind(this)) : undefined;
         const DELETE = this.delete ? this.buildMethod(this.delete.bind(this)) : undefined;
-        Bun.CSRF.generate
         return {
             GET,
             POST,
