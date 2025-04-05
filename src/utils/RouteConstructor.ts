@@ -1,7 +1,6 @@
 // NOTE: do not update this class, ask for help if you need to update it.
 
 import type { Server } from "bun";
-import { StatusCodes } from "./StatusCodes";
 
 type RequestContextTokens = 'csrf'
 export interface RequestContext {
@@ -16,6 +15,14 @@ type ConstructorHandler<T extends string> = (req: Bun.BunRequest<T>, server: Ser
 
 interface BunRouteConstructor { 
     middlewares: ((request: Bun.BunRequest, server: Server, ctx: RequestContext) => (Response | void) | Promise<Response | void>)[];
+}
+
+export interface IBunRoute<T extends string> {
+    get?: ConstructorHandler<T>;
+    post?: ConstructorHandler<T>;
+    put?: ConstructorHandler<T>;
+    delete?: ConstructorHandler<T>;
+    build: () => Bun.RouterTypes.RouteValue<T>
 }
 
 /**
@@ -46,25 +53,17 @@ interface BunRouteConstructor {
  * @template T A string type parameter representing the route path pattern
  */
 
-export class BunRoute <T extends string>{
+export class BunRoute <T extends string> implements IBunRoute<T> {
     private middlewares: BunRouteConstructor["middlewares"] = [];
+    public get?: ConstructorHandler<T> | undefined;
+    public post?: ConstructorHandler<T> | undefined;
+    public put?: ConstructorHandler<T> | undefined;
+    public delete?: ConstructorHandler<T> | undefined;
+
     constructor({
         middlewares = [],
     }: BunRouteConstructor) {
         this.middlewares = middlewares;
-    }
-
-    async get(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
-    }
-    async post(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
-    }
-    async put(request: Bun.BunRequest, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
-    }
-    async delete(req: Bun.BunRequest<T>, server: Server, ctx: RequestContext): Promise<Response> {
-        return new Response('Method not implemented.', StatusCodes.METHOD_NOT_ALLOWED);
     }
 
     private buildMethod(method?: ConstructorHandler<T>): Bun.RouterTypes.RouteHandler<T> | undefined {
@@ -110,16 +109,16 @@ export class BunRoute <T extends string>{
      * @returns {Bun.RouterTypes.RouteValue<T>} A Bun-compatible route configuration object
      *         containing handlers for implemented HTTP methods
      */
-    public build(): Bun.RouterTypes.RouteValue<T> {
+    public build(): Bun.RouterTypes.RouteHandlerObject<T> {
         const GET = this.get ? this.buildMethod(this.get.bind(this)) : undefined;
         const POST = this.post ? this.buildMethod(this.post.bind(this)) : undefined;
         const PUT = this.put ? this.buildMethod(this.put.bind(this)) : undefined;
         const DELETE = this.delete ? this.buildMethod(this.delete.bind(this)) : undefined;
         return {
-            GET,
-            POST,
-            PUT,
-            DELETE,
+            ...GET && { GET },
+            ...POST && { POST },
+            ...PUT && { PUT },
+            ...DELETE && { DELETE },
         }
     }
 }

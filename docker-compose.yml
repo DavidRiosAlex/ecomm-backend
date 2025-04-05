@@ -1,0 +1,42 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - db
+
+  db:
+    container_name: ecomm-db
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=dummy-user
+      - POSTGRES_PASSWORD=dummy-password
+      - POSTGRES_DB=ecomm_db
+      - PGDATA=/data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ecomm_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

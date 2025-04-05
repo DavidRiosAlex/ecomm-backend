@@ -1,17 +1,16 @@
-import { RateLimiterMiddleware } from "middlewares/rateLimiter";
-import { BunRoute, type RequestContext } from "@utils/RouteConstructor";
-import { APP_VERSION, RELEASE_VERSION_DATE } from "@configs/index";
-import type { Server } from "bun";
+import { RateLimiterMiddleware } from "@middlewares/rateLimiter";
 import CSRFValidator from "@middlewares/csrfValidator";
+import { BunRoute } from "@utils/RouteConstructor";
+import { APP_VERSION, RELEASE_VERSION_DATE } from "@configs/index";
 import { i18nMiddleware } from "@middlewares/i18nMiddleware";
 import { StatusCodes } from "@utils/StatusCodes";
 
 class MainController extends BunRoute<'/'> {
-    async get(request: Bun.BunRequest, server: Server, ctx: RequestContext) {
+    get = async () => {
         return Response.json(
             { version: APP_VERSION, release_date: RELEASE_VERSION_DATE },
                 StatusCodes.OK
-            );
+        );
     }
 }
 

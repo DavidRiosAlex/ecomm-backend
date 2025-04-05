@@ -12,22 +12,8 @@ COPY . .
 
 # Install dependencies and build the application
 RUN bun install
-RUN bun run build
 
-# Stage 2: Run
-FROM oven/bun:1.2.8-alpine
-
-# Install necessary runtime dependencies
-RUN apk add --no-cache nodejs
-
-# Create app directory
-WORKDIR /usr/src/app
-
-# Copy built files from the builder stage
-COPY --from=builder /usr/src/app/build/index.js ./index.js
-
-# Expose the port your app runs on
 EXPOSE 3001
 
 # Start the application
-CMD ["bun", "run", "index.js"]
+CMD ["bun", "run", "dev"]

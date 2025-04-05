@@ -11,6 +11,7 @@ type SessionData = {
 const sessions = new Map<string, SessionData>();
 
 const Authenticator = (request: Bun.BunRequest, server: Server, ctx: RequestContext): Response | void => {
+    // ecomm application access-session
     const auth = request.cookies.get('eaa-session');
     if (!auth) {
         return new Response('Unauthorized', StatusCodes.UNAUTHORIZED);
