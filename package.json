@@ -21,7 +21,7 @@
     "dev": "bun --hot src/index.ts",
     "lint": "bunx eslint --fix",
     "build": "bun build src/index.ts --outdir ./build",
-    "line-of-code": "bunx cloc src > .line-of-code"
+    "cloc": "bunx cloc src > .line-of-code"
   },
   "dependencies": {
     "i18next": "^24.2.3"
