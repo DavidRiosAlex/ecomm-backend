@@ -16,16 +16,16 @@ services:
 
   db:
     container_name: ecomm-db
-    image: postgres:16
+    image: postgres:16.2
     environment:
-      - POSTGRES_USER=dummy-user
-      - POSTGRES_PASSWORD=dummy-password
-      - POSTGRES_DB=ecomm_db
-      - PGDATA=/data/postgres
+      - POSTGRES_USER=${PGUSERNAME}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
+      - PGDATA=${PGDATA}
     volumes:
-      - db:/data/postgres
+      - ./data/db:/data/postgres
     ports:
-      - "5432:5432"
+      - "${PGPORT}:${PGPORT}"
     networks:
       - db
     healthcheck:
@@ -37,6 +37,3 @@ services:
 networks:
   db:
     driver: bridge
-
-volumes:
-  db:

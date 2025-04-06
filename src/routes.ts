@@ -5,11 +5,10 @@ import {
     CategoriesRoute,
     RegisterRoute
 } from "./controllers";
-console.log(MainRoute);
+
+
 export const routes: Record<string, Bun.RouterTypes.RouteValue<string> > = {
-    '/api': {
-        GET: MainRoute.GET,
-    },
+    '/api': MainRoute,
     '/api/products': ProductsRoute,
     '/api/categories': CategoriesRoute,
     '/api/login': LoginRoute,

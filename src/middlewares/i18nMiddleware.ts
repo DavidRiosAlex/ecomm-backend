@@ -18,7 +18,6 @@ i18next.init<{
 
 export const i18nMiddleware = (request: Bun.BunRequest, server: Server, ctx: RequestContext) => {
 	const language = request.headers.get("accept-language")?.split(",")[0] || "en";
-    console.log(language, Bun.file("src/translations/en/messages.json").json())
     const i18n = i18next.cloneInstance({ initAsync: false, initImmediate: false, lng: language });
 	i18n.changeLanguage(language);
 	ctx.i18n = { t: i18n.t.bind(i18n) };
