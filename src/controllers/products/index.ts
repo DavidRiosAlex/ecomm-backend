@@ -14,11 +14,7 @@ class ProductsRoute extends BunRoute<'/products'> {
             }
         });
 
-        return Response.json({
-            products,
-            offset,
-            limit,
-        }, {
+        return Response.json(products, {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

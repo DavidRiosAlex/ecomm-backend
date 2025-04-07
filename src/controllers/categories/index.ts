@@ -14,11 +14,7 @@ class CategoriesRoute extends BunRoute<'/categories'> {
             }
         });
 
-        return Response.json({
-            categories,
-            offset,
-            limit,
-        }, {
+        return Response.json(categories, {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

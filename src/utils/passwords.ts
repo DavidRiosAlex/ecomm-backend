@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export function hashPassword(password: string, email: string): string {
+export function hashPassword(password: string, email: string): Promise<string> {
     const secret = process.env.APP_SECRET;
     if (!secret) {
         throw new Error("APP_SECRET is not defined in the environment variables.");
@@ -11,15 +11,21 @@ export function hashPassword(password: string, email: string): string {
     const keyLength = 64;
     const digest = 'sha512';
 
-    return crypto.pbkdf2Sync(
-        password,
-        salt,
-        iterations,
-        keyLength,
-        digest
-    ).toString('hex');
+    return new Promise((res, rej) => {
+        crypto.pbkdf2(
+            password,
+            salt,
+            iterations,
+            keyLength,
+            digest,
+            (err, derivedKey) => {
+                if (err) {
+                    rej(err);
+                } else {
+                    res(derivedKey.toString('hex'));
+                }
+            }
+        );
+    });
 }
 
-console.log('admin: ', hashPassword('admin@example.com', 'admin123'));
-console.log('vendedor: ', hashPassword('vendedor@example.com', 'vendedor123'));
-console.log('usuario: ', hashPassword('usuario@example.com', 'usuario123'));

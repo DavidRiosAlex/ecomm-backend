@@ -14,11 +14,7 @@ class UsersRoute extends BunRoute<'/users'> {
             }
         });
 
-        return Response.json({
-            users,
-            offset,
-            limit,
-        }, {
+        return Response.json(users, {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

@@ -10,9 +10,11 @@ type SessionData = {
 // In a real application, you would use a database or a more robust session management system.
 const sessions = new Map<string, SessionData>();
 
+export const sessionCookieName = 'eaa-session';
+
 const Authenticator = (request: Bun.BunRequest, server: Server, ctx: RequestContext): Response | void => {
     // ecomm application access-session
-    const auth = request.cookies.get('eaa-session');
+    const auth = request.cookies.get(sessionCookieName);
     if (!auth) {
         return new Response('Unauthorized', StatusCodes.UNAUTHORIZED);
     }
@@ -28,9 +30,9 @@ const Authenticator = (request: Bun.BunRequest, server: Server, ctx: RequestCont
     ctx.auth.user = user;
 }
 
-export const createAuthSession = (userId: string): string => {
+export const createAuthSession = (userId: number): string => {
     const sessionGenerated = Bun.randomUUIDv7("hex", Date.now())
-    sessions.set(sessionGenerated, { userId, sessionId: sessionGenerated });
+    sessions.set(sessionGenerated, { userId: userId.toString(), sessionId: sessionGenerated });
     return sessionGenerated;
 }
 

@@ -1,7 +1,7 @@
-import { sql } from "bun";
+import { sql, type SQLQuery } from "bun";
 
 interface ISelectOptions {
-    filters?: string;
+    filters?: string | Record<string, any>;
     pagination?: {
         limit: number;
         offset: number;
@@ -32,7 +32,7 @@ export class AbstractModelDB {
         // Delete data from table
         await sql`DELETE FROM ${sql(this.table_name)} WHERE ${sql(condition)}`;
     }
-    static async select({ filters, pagination }: ISelectOptions = {}) {
+    static async select<T>({ filters, pagination }: ISelectOptions = {}): Promise<{ limit: number, offset: number, total: number, results: T[]} | T[]> {
         if (pagination) {
             const { limit, offset } = pagination;
             const [results, total] = await Promise.all([
@@ -46,9 +46,22 @@ export class AbstractModelDB {
             return { limit, offset, total: total[0].count, results };
         } else {
             // Select all data from table
-            return await sql`SELECT * FROM ${sql(this.table_name)} ${
-                filters ? sql`WHERE ${sql(filters)}` : sql``
-            }`;
+            const filter = Object.entries(filters || {}).reduce((acc, [key, value]) => {
+                if (typeof value === 'string') {
+                    acc.push(sql`${key}='${value}'`);
+                } else if (typeof value === 'number') {
+                    acc.push(`${key}=${value}`);
+                } else if (Array.isArray(value)) {
+                    acc.push(`${key} IN (${value.map(v => `'${v}'`).join(',')})`);
+                } else {
+                    acc.push(`${key}=${value}`);
+                }
+                return acc;
+            }, [] as (string | SQLQuery)[]).join(' AND ');
+
+            const where_statment = filter ? `WHERE ${filter}` : '';
+            const results = await sql`SELECT * FROM ${sql(this.table_name)} ${sql(where_statment)}`;
+            return results;
         }
     }
 }
