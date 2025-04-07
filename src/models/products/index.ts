@@ -1,7 +1,7 @@
 import { AbstractModelDB } from "models/model";
 
 export class Product extends AbstractModelDB {
-    static table_name = 'producto';
+    static table_name = 'product';
     id: number | undefined;
     category_id: number | undefined;
     name: string | undefined;
@@ -10,6 +10,7 @@ export class Product extends AbstractModelDB {
     price: number | undefined;
     stock: number | undefined;
     created_at: Date | undefined;
+    updated_at: Date | undefined;
 
     constructor({
         id,
@@ -20,6 +21,7 @@ export class Product extends AbstractModelDB {
         price,
         stock,
         created_at,
+        updated_at,
     }: {
         id?: number;
         category_id?: number;
@@ -29,6 +31,7 @@ export class Product extends AbstractModelDB {
         price: number;
         stock?: number;
         created_at?: Date;
+        updated_at?: Date;
     }) {
         super();
         this.id = id;
@@ -39,5 +42,6 @@ export class Product extends AbstractModelDB {
         this.price = price;
         this.stock = stock ?? 0;
         this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 }

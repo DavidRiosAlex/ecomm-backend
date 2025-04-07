@@ -2,12 +2,22 @@ import { BunRoute } from '@utils/RouteConstructor';
 import { Product } from 'models/products';
 
 class ProductsRoute extends BunRoute<'/products'> {
-    get = async () => {
+    get = async (req: Request) => {
+        const url = new URL(req.url);
+        const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+        const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+
+        const products = await Product.select({
+            pagination: {
+                limit,
+                offset,
+            }
+        });
+
         return Response.json({
-            products: await Product.select(),
-            total: 0,
-            offset: 0,
-            limit: 0,
+            products,
+            offset,
+            limit,
         }, {
             status: 200,
             headers: { 'Content-Type': 'application/json' },

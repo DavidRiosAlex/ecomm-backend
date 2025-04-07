@@ -28,6 +28,7 @@
       "@utils/*": ["utils/*"],
       "@configs/*": ["configs/*"],
       "@middlewares/*": ["middlewares/*"],
+      "@models/*": ["models/*"],
     },
     "baseUrl": "./src",
   }

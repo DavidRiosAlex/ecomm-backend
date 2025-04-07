@@ -3,7 +3,8 @@ import {
     MainRoute,
     LoginRoute,
     CategoriesRoute,
-    RegisterRoute
+    RegisterRoute,
+    UsersRoute
 } from "./controllers";
 
 
@@ -13,4 +14,5 @@ export const routes: Record<string, Bun.RouterTypes.RouteValue<string> > = {
     '/api/categories': CategoriesRoute,
     '/api/login': LoginRoute,
     '/api/register': RegisterRoute,
+    '/api/users': UsersRoute,
 }

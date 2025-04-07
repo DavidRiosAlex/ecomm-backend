@@ -1,5 +1,12 @@
 import { sql } from "bun";
 
+interface ISelectOptions {
+    filters?: string;
+    pagination?: {
+        limit: number;
+        offset: number;
+    };
+}
 
 export class AbstractModelDB {
   static table_name: string;
@@ -25,13 +32,23 @@ export class AbstractModelDB {
         // Delete data from table
         await sql`DELETE FROM ${sql(this.table_name)} WHERE ${sql(condition)}`;
     }
-    static async select(condition?: string) {
-        if (condition) {
-            // Select data from table with condition
-            return await sql`SELECT * FROM ${sql(this.table_name)} WHERE ${sql(condition)}`;
+    static async select({ filters, pagination }: ISelectOptions = {}) {
+        if (pagination) {
+            const { limit, offset } = pagination;
+            const [results, total] = await Promise.all([
+                sql`SELECT * FROM ${sql(this.table_name)} ${
+                    filters ? sql`WHERE ${sql(filters)}` : sql``
+                } LIMIT ${limit} OFFSET ${offset}`,
+                sql`SELECT COUNT(*) AS count FROM ${sql(this.table_name)} ${
+                    filters ? sql`WHERE ${sql(filters)}` : sql``
+                }`
+            ]);
+            return { limit, offset, total: total[0].count, results };
         } else {
             // Select all data from table
-            return await sql`SELECT * FROM ${sql(this.table_name)}`;
+            return await sql`SELECT * FROM ${sql(this.table_name)} ${
+                filters ? sql`WHERE ${sql(filters)}` : sql``
+            }`;
         }
     }
 }
